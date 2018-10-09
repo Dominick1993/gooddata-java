@@ -65,6 +65,17 @@ public class Metric extends AbstractObj implements Queryable, Updatable {
         return content.getFolders();
     }
 
+    /**
+     * Metric instance with new expression
+     *
+     * @param expression metric MAQL expression
+     * @return new instance of Metric class with updated expression
+     */
+    @JsonIgnore
+    public Metric withExpression(String expression) {
+        return new Metric(meta, new Content(expression, content.getFormat()));
+    }
+
     @Override
     public String toString() {
         return GoodDataToStringBuilder.defaultToString(this);

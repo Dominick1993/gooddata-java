@@ -12,7 +12,9 @@ import static net.javacrumbs.jsonunit.JsonMatchers.jsonEquals;
 import static com.gooddata.util.ResourceUtils.readObjectFromResource;
 import static net.javacrumbs.jsonunit.JsonMatchers.jsonNodeAbsent;
 import static net.javacrumbs.jsonunit.core.util.ResourceUtils.resource;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -78,5 +80,15 @@ public class MetricTest {
         final Metric deserialized = SerializationUtils.roundtrip(metric);
 
         assertThat(deserialized, jsonEquals(metric));
+    }
+
+    @Test
+    public void shouldChangeExpression() throws Exception {
+        final Metric metric = readObjectFromResource("/md/metric-out.json", Metric.class);
+        final Metric changedExpression = metric.withExpression("SELECT SUM([/gdc/md/testUri])");
+
+        assertThat(changedExpression.meta, equalTo(metric.meta));
+        assertThat(changedExpression.getExpression(), not(metric.getExpression()));
+        assertThat(changedExpression.getExpression(), equalTo("SELECT SUM([/gdc/md/testUri])"));
     }
 }
